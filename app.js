@@ -1,13 +1,21 @@
 // Initialize Supabase client
-// These keys will be visible in your frontend code
-// For production, you should control access with Row Level Security
+// These keys should be obtained from your Supabase project settings
 const SUPABASE_URL = 'https://jkyvvvsongwqjgckvboh.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2a3l2dnZzb25nd3FqZ2NrdmJvaCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzA5NjQ2OTEzLCJleHAiOjIwMjUyMjI5MTN9.TbM9-A2l-YKBtj9wH6Fbat5tX7Dy7A-i6PK-_FtVrPU';
+// This is the public/anon key, not the service role key
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprdXZ2dnNvbmd3cWpnY2t2Ym9oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk1NTk1MTMsImV4cCI6MjAyNTEzNTUxM30.vL8uh4g1GsXlRVrGIdRyHI0xG89diBLW1dLfFc5DV7I';
 
 // Fix for the library loading
 document.addEventListener('DOMContentLoaded', function() {
-    // Create Supabase client
-    window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // Create Supabase client with proper error handling
+    try {
+        window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        console.log("Supabase client initialized");
+    } catch (error) {
+        console.error("Failed to initialize Supabase client:", error);
+        document.getElementById('connectionStatus').textContent = 'Library Error';
+        document.getElementById('connectionStatus').classList.add('error');
+        return;
+    }
     
     // DOM Elements
     const connectionStatus = document.getElementById('connectionStatus');
@@ -38,9 +46,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check connection on page load
     async function checkConnection() {
         try {
-            const { data, error } = await window.supabase.from('online_user').select('count()', { count: 'exact' });
+            // Use a simple select to test connection
+            const { data, error } = await window.supabase
+                .from('online_user')
+                .select('count(*)', { count: 'exact' })
+                .limit(1);
             
-            if (error) throw error;
+            if (error) {
+                console.error('Connection error details:', error);
+                throw error;
+            }
             
             connectionStatus.textContent = 'Connected';
             connectionStatus.classList.add('connected');
@@ -56,40 +71,35 @@ document.addEventListener('DOMContentLoaded', function() {
         showLoading(tablesList);
         
         try {
-            // First try to fetch from postgres_tables
-            let { data, error } = await window.supabase.rpc('get_tables');
-            
-            if (error) {
-                // Fallback to manual SQL query
-                const { data: tableData, error: tableError } = await window.supabase
-                    .from('online_user')
-                    .select('*')
-                    .limit(1);
+            // Use direct query on the online_user table to check permission
+            const { data: testData, error: testError } = await window.supabase
+                .from('online_user')
+                .select('*')
+                .limit(1);
                 
-                if (tableError) throw tableError;
-                
-                data = [
-                    { tablename: 'online_user' },
-                    { tablename: 'project' },
-                    { tablename: 'task' },
-                    { tablename: 'meeting' },
-                    { tablename: 'project_members' },
-                    { tablename: 'contribution_report' },
-                    { tablename: 'user_project' },
-                    { tablename: 'task_members' }
-                ];
+            if (testError) {
+                console.error('Permission test error:', testError);
+                throw testError;
             }
             
-            if (data && data.length > 0) {
-                let html = '<table><tr><th>Table Name</th></tr>';
-                data.forEach(table => {
-                    html += `<tr><td>${table.tablename}</td></tr>`;
-                });
-                html += '</table>';
-                tablesList.innerHTML = html;
-            } else {
-                tablesList.innerHTML = 'No tables found or insufficient permissions.';
-            }
+            // Hard-coded list of tables based on the schema
+            const tableNames = [
+                'online_user',
+                'project',
+                'task',
+                'meeting',
+                'project_members',
+                'contribution_report',
+                'user_project',
+                'task_members'
+            ];
+            
+            let html = '<table><tr><th>Table Name</th></tr>';
+            tableNames.forEach(tableName => {
+                html += `<tr><td>${tableName}</td></tr>`;
+            });
+            html += '</table>';
+            tablesList.innerHTML = html;
         } catch (error) {
             console.error('Error listing tables:', error);
             showError(tablesList, error.message || 'Failed to list tables');
@@ -105,7 +115,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 .from('online_user')
                 .select('user_id, username, email, theme, currency_total');
             
-            if (error) throw error;
+            if (error) {
+                console.error('User listing error details:', error);
+                throw error;
+            }
             
             if (data && data.length > 0) {
                 let html = '<table><tr><th>ID</th><th>Username</th><th>Email</th><th>Theme</th><th>Currency</th></tr>';
@@ -153,10 +166,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         currency_total: 0,
                         customize_settings: ''
                     }
-                ])
-                .select();
+                ]);
             
-            if (error) throw error;
+            if (error) {
+                console.error('User add error details:', error);
+                throw error;
+            }
             
             showSuccess(addUserResult, 'User added successfully!');
             addUserForm.reset();
@@ -179,9 +194,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Make a simple query to measure response time
             const { data, error } = await window.supabase
                 .from('online_user')
-                .select('count()', { count: 'exact' });
+                .select('count(*)', { count: 'exact' })
+                .limit(1);
             
-            if (error) throw error;
+            if (error) {
+                console.error('Ping error details:', error);
+                throw error;
+            }
             
             const endTime = performance.now();
             const responseTime = (endTime - startTime).toFixed(2);

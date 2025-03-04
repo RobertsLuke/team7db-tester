@@ -1,8 +1,8 @@
 // Initialize Supabase client
 // These keys should be obtained from your Supabase project settings
 const SUPABASE_URL = 'https://jkyvvvsongwqjgckvboh.supabase.co';
-// This is the public/anon key, not the service role key
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprdXZ2dnNvbmd3cWpnY2t2Ym9oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk1NTk1MTMsImV4cCI6MjAyNTEzNTUxM30.vL8uh4g1GsXlRVrGIdRyHI0xG89diBLW1dLfFc5DV7I';
+// This is the public/anon key (safe to be in client-side code)
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpreXZ2dnNvbmd3cWpnY2t2Ym9oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMDQ1MzYsImV4cCI6MjA1NjY4MDUzNn0.pMSY-jKiaa7ozohB_xJwFKyAhd3VzrIFp2xdAZhNsfo';
 
 // Fix for the library loading
 document.addEventListener('DOMContentLoaded', function() {

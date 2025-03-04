@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team7DB Tester</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Supabase JavaScript client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Team7DB Connection Tester</h1>
+
+        <div class="status-container">
+            <p>Connection Status: <span id="connectionStatus">Not Connected</span></p>
+        </div>
+
+        <div class="card">
+            <h2>Database Tables</h2>
+            <button id="listTablesBtn">List Tables</button>
+            <div id="tablesList" class="results"></div>
+        </div>
+
+        <div class="card">
+            <h2>User Operations</h2>
+            <button id="listUsersBtn">List Users</button>
+            <div id="usersList" class="results"></div>
+        </div>
+
+        <div class="card">
+            <h2>Add New User</h2>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="theme">Theme:</label>
+                    <select id="theme">
+                        <option value="Light">Light</option>
+                        <option value="Dark">Dark</option>
+                    </select>
+                </div>
+                <button type="submit">Add User</button>
+            </form>
+            <div id="addUserResult" class="results"></div>
+        </div>
+
+        <div class="card">
+            <h2>Check Connection Speed</h2>
+            <button id="pingBtn">Ping Database</button>
+            <div id="pingResult" class="results"></div>
+        </div>
+
+        <footer>
+            <p>Created for testing Team7DB on Supabase</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

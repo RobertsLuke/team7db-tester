@@ -12,6 +12,17 @@
     <div class="container">
         <h1>Team7DB Connection Tester</h1>
 
+        <div class="card notice">
+            <h3>API Keys</h3>
+            <p>To use this tool, you need to provide the correct Supabase API keys, which can be found in your Supabase project settings:</p>
+            <ol>
+                <li>Go to <a href="https://app.supabase.com" target="_blank">app.supabase.com</a> and select your project</li>
+                <li>Navigate to Project Settings → API</li>
+                <li>Under "Project API keys", find and copy the "anon" public key</li>
+                <li>Update the app.js file with your key</li>
+            </ol>
+        </div>
+
         <div class="status-container">
             <p>Connection Status: <span id="connectionStatus">Not Connected</span></p>
         </div>
@@ -63,6 +74,7 @@
 
         <footer>
             <p>Created for testing Team7DB on Supabase</p>
+            <p><a href="https://github.com/RobertsLuke/team7db-tester" target="_blank">View on GitHub</a></p>
         </footer>
     </div>
 
